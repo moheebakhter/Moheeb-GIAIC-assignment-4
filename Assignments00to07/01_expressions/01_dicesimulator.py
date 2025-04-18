@@ -3,8 +3,8 @@ NUM_SIDES = 6
 
 def roll_dice():
 
-    die1 = random.randit(1, NUM_SIDES)
-    die2 = random.randit(1, NUM_SIDES)
+    die1 = random.randint(1, NUM_SIDES)
+    die2 = random.randint(1, NUM_SIDES)
 
     total = die1+ die2
     print(f"Die 1: {die1}, Die 2: {die2}, Total: {total} ")
