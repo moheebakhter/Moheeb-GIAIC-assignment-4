@@ -8,6 +8,9 @@ uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
 
+    # Strip any whitespace from column names early
+    df.columns = df.columns.str.strip()
+
     st.subheader("Data Preview")
     st.write(df.head())
 
@@ -21,13 +24,22 @@ if uploaded_file is not None:
     selected_value = st.selectbox("Select value", unique_values)
 
     filtered_df = df[df[selected_column] == selected_value]
+
+    st.subheader("Filtered Data")
     st.write(filtered_df)
 
     st.subheader("Plot Data")
-    x_column = st.selectbox("Select x-axis column", columns)
-    y_column = st.selectbox("Select y-axis column", columns)
+    
+    # Use filtered_df columns for plotting, not the original df
+    plot_columns = filtered_df.columns.tolist()
+    x_column = st.selectbox("Select x-axis column", plot_columns, key="x_column")
+    y_column = st.selectbox("Select y-axis column", plot_columns, key="y_column")
 
     if st.button("Generate Plot"):
-        st.line_chart(filtered_df.set_index(x_column)[y_column])
+        try:
+            st.line_chart(filtered_df.set_index(x_column)[y_column])
+        except KeyError as e:
+            st.error(f"Column not found: {e}")
+
 else:
     st.write("Waiting on file upload...")
